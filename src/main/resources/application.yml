@@ -1,0 +1,8 @@
+dcwai:
+  dataset-path: ./docker/product-counter/jcpenney_com-ecommerce_sample.csv
+  ignite-addresses:
+    - localhost
+
+spring:
+  application:
+    name: product-counter

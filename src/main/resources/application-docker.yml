@@ -1,0 +1,6 @@
+dcwai:
+  dataset-path: /product-counter/jcpenney_com-ecommerce_sample.csv
+  ignite-addresses:
+    - ignite1
+    - ignite2
+    - ignite3

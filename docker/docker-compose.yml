@@ -1,0 +1,55 @@
+version: '3'
+services:
+  ignite1:
+    image: apacheignite/ignite
+    container_name: dcwai-ignite1
+    hostname: ignite1
+    volumes:
+      - ./ignite:/ignite
+    environment:
+      - CONFIG_URI=/ignite/ignite-config.xml
+      - IGNITE_QUIET=false
+    ports:
+      - 47100:47100
+      - 47500:47500
+
+  ignite2:
+    image: apacheignite/ignite
+    container_name: dcwai-ignite2
+    hostname: ignite2
+    volumes:
+      - ./ignite:/ignite
+    environment:
+      - CONFIG_URI=/ignite/ignite-config.xml
+      - IGNITE_QUIET=false
+    ports:
+      - 47101:47100
+      - 47501:47500
+
+  ignite3:
+    image: apacheignite/ignite
+    container_name: dcwai-ignite3
+    hostname: ignite3
+    volumes:
+      - ./ignite:/ignite
+    environment:
+      - CONFIG_URI=/ignite/ignite-config.xml
+      - IGNITE_QUIET=false
+    ports:
+      - 47102:47100
+      - 47502:47500
+
+  product-counter:
+    container_name: dcwai-product-counter
+    build:
+      context: ..
+      dockerfile: docker/product-counter/Dockerfile
+    volumes:
+      - ./product-counter:/product-counter
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      while ! (nc -z ignite1 47500); do sleep 5; echo 'Waiting for ignite to start-up...'; done;
+      java -jar -Dspring.profiles.active=docker /app.jar
+      "
+

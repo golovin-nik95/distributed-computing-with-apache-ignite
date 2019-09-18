@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.1.7.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'io.franzbecker.gradle-lombok' version '3.1.0'
+}
+
+ext {
+    igniteVersion = '2.7.5'
+    lombokVersion = '1.18.8'
+    h2Version = '1.4.197'
+    opencsvVersion = '4.6'
+}
+
+group 'com.griddynamics.ngolovin'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation "org.apache.ignite:ignite-spring:${igniteVersion}"
+    implementation "com.h2database:h2:${h2Version}"
+    implementation "com.opencsv:opencsv:${opencsvVersion}"
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+}
