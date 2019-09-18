@@ -8,7 +8,6 @@ services:
       - ./ignite:/ignite
     environment:
       - CONFIG_URI=/ignite/ignite-config.xml
-      - IGNITE_QUIET=false
     ports:
       - 47100:47100
       - 47500:47500
@@ -21,7 +20,6 @@ services:
       - ./ignite:/ignite
     environment:
       - CONFIG_URI=/ignite/ignite-config.xml
-      - IGNITE_QUIET=false
     ports:
       - 47101:47100
       - 47501:47500
@@ -34,7 +32,6 @@ services:
       - ./ignite:/ignite
     environment:
       - CONFIG_URI=/ignite/ignite-config.xml
-      - IGNITE_QUIET=false
     ports:
       - 47102:47100
       - 47502:47500
