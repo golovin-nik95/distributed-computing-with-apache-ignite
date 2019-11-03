@@ -1,24 +1,23 @@
 package com.griddynamics.ngolovin.dcwai.jobs;
 
 import com.griddynamics.ngolovin.dcwai.configs.IgniteConfig;
-import com.griddynamics.ngolovin.dcwai.models.Product;
-import com.griddynamics.ngolovin.dcwai.models.ProductCounterJobResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
-import org.apache.ignite.lang.IgniteCallable;
+import org.apache.ignite.IgniteException;
+import org.apache.ignite.binary.BinaryObject;
+import org.apache.ignite.compute.ComputeJobAdapter;
 import org.apache.ignite.resources.IgniteInstanceResource;
 
 import javax.cache.Cache;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
-public class ProductCounterJob implements IgniteCallable<ProductCounterJobResult>, Serializable {
+public class ProductCounterJob extends ComputeJobAdapter {
 
     private static final BigDecimal FIFTY = new BigDecimal("50.00");
     private static final BigDecimal ONE_HUNDRED = new BigDecimal("100.00");
@@ -27,16 +26,14 @@ public class ProductCounterJob implements IgniteCallable<ProductCounterJobResult
     private Ignite ignite;
 
     @Override
-    public ProductCounterJobResult call() {
-        StopWatch watch = new StopWatch();
-        watch.start();
+    public Object execute() throws IgniteException {
+        UUID nodeId = ignite.cluster().localNode().id();
+        log.info("Started ProductCounterJob at node with id = " + nodeId);
 
-        log.info("Started ProductCounterJob");
-
-        IgniteCache<String, Product> productCache = ignite.cache(IgniteConfig.PRODUCT_CACHE_NAME);
+        IgniteCache<String, BinaryObject> productCache = ignite.cache(IgniteConfig.PRODUCT_CACHE_NAME).withKeepBinary();
         Map<String, Long> productsByPriceRanges = new HashMap<>();
-        for (Cache.Entry<String, Product> productEntry : productCache) {
-            String listPrice = productEntry.getValue().getListPrice();
+        for (Cache.Entry<String, BinaryObject> productEntry : productCache.localEntries()) {
+            String listPrice = productEntry.getValue().toBuilder().getField("listPrice");
             if (StringUtils.isBlank(listPrice)) {
                 continue;
             }
@@ -57,8 +54,8 @@ public class ProductCounterJob implements IgniteCallable<ProductCounterJobResult
             }
         }
 
-        log.info("Finished ProductCounterJob");
+        log.info("Finished ProductCounterJob at node = " + nodeId + " with result = " + productsByPriceRanges);
 
-        return new ProductCounterJobResult(productsByPriceRanges, watch.getTime());
+        return productsByPriceRanges;
     }
 }

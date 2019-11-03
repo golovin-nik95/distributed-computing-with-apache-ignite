@@ -1,12 +1,12 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.1.7.RELEASE'
+    id 'org.springframework.boot' version '2.2.0.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'io.franzbecker.gradle-lombok' version '3.1.0'
 }
 
 ext {
-    igniteVersion = '2.7.5'
+    igniteVersion = '2.7.6'
     lombokVersion = '1.18.8'
     h2Version = '1.4.197'
     opencsvVersion = '4.6'
@@ -15,8 +15,8 @@ ext {
 group 'com.griddynamics.ngolovin'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()

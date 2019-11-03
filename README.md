@@ -15,7 +15,7 @@ Capstone project of the course "Java Engineer to Scalable Backend Developer" at 
 
 **Local:** `./gradlew bootRun`
 
-**Docker:** `docker-compose up -d product-counter --build --force-recreate`
+**Docker:** `docker-compose up --build --force-recreate -d product-counter`
 
 ## Services
 

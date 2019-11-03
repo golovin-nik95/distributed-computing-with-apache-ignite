@@ -1,11 +1,10 @@
 package com.griddynamics.ngolovin.dcwai;
 
-import com.griddynamics.ngolovin.dcwai.jobs.ProductCounterJob;
-import com.griddynamics.ngolovin.dcwai.models.ProductCounterJobResult;
+import com.griddynamics.ngolovin.dcwai.jobs.ProductCounterTask;
+import com.griddynamics.ngolovin.dcwai.models.ProductCounterTaskResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCompute;
-import org.apache.ignite.cluster.ClusterGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -26,9 +25,8 @@ public class DistributedComputingWithApacheIgniteApplication implements CommandL
 
     @Override
     public void run(String... args) {
-        ClusterGroup clusterGroup = ignite.cluster().forLocal();
-        IgniteCompute igniteCompute = ignite.compute(clusterGroup);
-        ProductCounterJobResult productCounterJobResult = igniteCompute.call(new ProductCounterJob());
-        log.info("productCounterJobResult={}", productCounterJobResult);
+        IgniteCompute igniteCompute = ignite.compute(ignite.cluster().forServers());
+        ProductCounterTaskResult productCounterTaskResult = igniteCompute.execute(new ProductCounterTask(), null);
+        log.info("productCounterTaskResult={}", productCounterTaskResult);
     }
 }

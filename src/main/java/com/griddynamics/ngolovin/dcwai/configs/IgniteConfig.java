@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Configuration
@@ -50,7 +50,7 @@ public class IgniteConfig {
 
         RFC4180Parser rfc4180Parser = new RFC4180ParserBuilder().build();
         try (IgniteDataStreamer<String, Product> productDataStreamer = ignite.dataStreamer(PRODUCT_CACHE_NAME);
-             BufferedReader reader = Files.newBufferedReader(Path.of(applicationProperties.getDatasetPath()));
+             BufferedReader reader = Files.newBufferedReader(Paths.get(applicationProperties.getDatasetPath()));
              CSVReader csvReader = new CSVReaderBuilder(reader).withCSVParser(rfc4180Parser).build()) {
 
             HeaderColumnNameMappingStrategy<Product> mappingStrategy = new HeaderColumnNameMappingStrategy<>();
