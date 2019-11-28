@@ -1,33 +1,38 @@
 package com.griddynamics.ngolovin.dcwai.jobs;
 
 import com.griddynamics.ngolovin.dcwai.configs.IgniteConfig;
+import com.griddynamics.ngolovin.dcwai.models.ProductCounterJobResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.binary.BinaryObject;
-import org.apache.ignite.compute.ComputeJobAdapter;
+import org.apache.ignite.lang.IgniteCallable;
 import org.apache.ignite.resources.IgniteInstanceResource;
 
 import javax.cache.Cache;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
-public class ProductCounterJob extends ComputeJobAdapter {
+public class ProductCounterJob implements IgniteCallable<ProductCounterJobResult> {
 
     private static final BigDecimal FIFTY = new BigDecimal("50.00");
     private static final BigDecimal ONE_HUNDRED = new BigDecimal("100.00");
+
+    private final StopWatch watch = new StopWatch();
 
     @IgniteInstanceResource
     private Ignite ignite;
 
     @Override
-    public Object execute() throws IgniteException {
-        UUID nodeId = ignite.cluster().localNode().id();
+    public ProductCounterJobResult call() throws IgniteException {
+        watch.start();
+
+        String nodeId = ignite.cluster().localNode().id().toString();
         log.info("Started ProductCounterJob at node with id = " + nodeId);
 
         IgniteCache<String, BinaryObject> productCache = ignite.cache(IgniteConfig.PRODUCT_CACHE_NAME).withKeepBinary();
@@ -56,6 +61,6 @@ public class ProductCounterJob extends ComputeJobAdapter {
 
         log.info("Finished ProductCounterJob at node = " + nodeId + " with result = " + productsByPriceRanges);
 
-        return productsByPriceRanges;
+        return new ProductCounterJobResult(nodeId, productsByPriceRanges, watch.getTime());
     }
 }

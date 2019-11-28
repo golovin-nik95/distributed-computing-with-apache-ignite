@@ -9,8 +9,9 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductCounterTaskResult {
+public class ProductCounterJobResult {
 
+    private String nodeId;
     private Map<String, Long> productsByPriceRanges;
     private Long executionTimeMillis;
 }
